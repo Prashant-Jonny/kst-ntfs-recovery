@@ -1,0 +1,11 @@
+$Header$
+That file contain main research data;
+legend:
+    + I'm check that statement
+    ~ I guess that, but not shure
+    * I read that in manuals, but need for check;
+
++~*	MTF-record size is 1k
+~	0x0000 ANSI_STRING "FILE0"
+*	MFT-mirror located at middle of the partition
++*	File's data can be allocated in MFT

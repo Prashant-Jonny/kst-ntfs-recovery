@@ -8,6 +8,7 @@ DiskReader::DiskReader(const QString filename)
 {
 
 	this->ready = false;
+	this->size=0;
 	this->file.setFileName(filename);
 	if (!this->file.exists()) {
 		DBG <<  __FUNCTION__ << tr("file not exists") << filename;
@@ -21,6 +22,7 @@ DiskReader::DiskReader(const QString filename)
 		return;
 	}
 	this->ready = true;
+	this->getSize();
 	DBG << tr("open ok");
 }
 DiskReader::~DiskReader() {
@@ -46,7 +48,7 @@ bool isOk=false;
 
 
 
-qint64 DiskReader::getSize()
+qint64 DiskReader::calcSize()
 {
 	quint64 position=0, step;
 
@@ -88,8 +90,7 @@ int DiskReader::read(char *buffer, unsigned int len)
 	actualRead = this->file.read(buffer,len);
 	if (actualRead != len) return 1;
 	return 0;
-	//return actualRead;
-	// TODO
+
 }
 
 

@@ -18,12 +18,20 @@ protected:
 
 	QBuffer buffer;
 	
+protected:
+	qint64 calcSize();
 
 public:
+	qint64 getSize() { 
+			if ( (this->size==0) && this->isReady()) {
+				this->size = this->calcSize();		
+				} return size; 
+			}
+	qint64 size;
 	bool goback(qint64 bytes);
 	bool skip(qint64 bytes);
 	int read(char *buffer, unsigned int len);
-	qint64 getSize();
+	
 
 	bool seek(qint64 offset);
 

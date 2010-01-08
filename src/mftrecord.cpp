@@ -1,41 +1,48 @@
 #include "mftrecord.h"
-//
+// 
 
-int mftrecord::isPossibleValid() {
-	static char parten[]="FILE0";
-	int pos=0;
-	pos = testFor(parten,5, this->data, MFT_RECORD_LEN);
-	DBG << "pos = " << pos;
-	return (pos>=0) ? pos : -1;
+int
+mftrecord::isPossibleValid ()
+{
+  static char parten[] = "FILE0";
+  int pos = 0;
+  pos = testFor (parten, 5, this->data, MFT_RECORD_LEN);
+  DBG << "pos = " << pos;
+  return (pos >= 0) ? pos : -1;
 
 }
 
-mftrecord::mftrecord(  ) 
+mftrecord::mftrecord ()
 {
-	// TODO
+  // TODO
 }
-//
 
-void mftrecord::dump()
+// 
+
+void
+mftrecord::dump ()
 {
-	int i=1024,j=0,k=0;
+  int i = 1024, j = 0, k = 0;
 
-	for (i=0; i<1024; i++) {
-		for (k=0;k<2;k++) {
-			for (j=0;j<8;j++) {
-				// printf("%x ", this->data[i++] & 0xFF) ;		
-				printf("%c", this->data[i++]) ;
-			}
-			//printf("\t");
-		}
-		//printf("\n");
+  for (i = 0; i < 1024; i++)
+    {
+      for (k = 0; k < 2; k++)
+	{
+	  for (j = 0; j < 8; j++)
+	    {
+	      // printf("%x ", this->data[i++] & 0xFF) ; 
+	      printf ("%c", this->data[i++]);
+	    }
+	  // printf("\t");
 	}
-	
+      // printf("\n");
+    }
+
 }
 
 
-void mftrecord::update()
+void
+mftrecord::update ()
 {
-	// TODO
+  // TODO
 }
-

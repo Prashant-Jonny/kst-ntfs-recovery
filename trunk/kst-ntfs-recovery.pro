@@ -6,5 +6,5 @@ OBJECTS_DIR = build
 MOC_DIR = build
 UI_DIR = build
 FORMS = ui/knr_dialog.ui
-HEADERS = src/knr_dialogimpl.h
-SOURCES = src/knr_dialogimpl.cpp src/main.cpp
+HEADERS = src/knr_dialogimpl.h src/diskreader.h src/common.h
+SOURCES = src/knr_dialogimpl.cpp src/main.cpp src/diskreader.cpp

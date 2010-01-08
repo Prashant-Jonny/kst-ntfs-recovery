@@ -6,6 +6,7 @@
 //
 #include <QDialog>
 #include "ui_knr_dialog.h"
+#include "common.h"
 //
 class DialogImpl : public QDialog, public Ui::Dialog
 {

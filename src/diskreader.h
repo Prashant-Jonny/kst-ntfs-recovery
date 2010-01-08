@@ -15,7 +15,7 @@ class DiskReader : public QObject
 protected:
 	QFile file;
 	bool ready;
-	qint64 BlockSize;
+
 	QBuffer buffer;
 	
 
@@ -24,10 +24,9 @@ public:
 	bool skip(qint64 bytes);
 	int read(char *buffer, unsigned int len);
 	qint64 getSize();
-	void ReadBlock();
+
 	bool seek(qint64 offset);
-	bool setBlockSize(qint64 value); // { BlockSize = value; }
-	bool getBlockSize() { return BlockSize; }
+
 
 	bool isReady(void);
 	

@@ -44,20 +44,7 @@ bool isOk=false;
 }
 
 
-void DiskReader::ReadBlock()
-{
-	//this->file.read(this->buffer.data(), this->BlockSize);
-}
 
-bool DiskReader::setBlockSize(qint64 value) {
-		BlockSize = value;
-	
-	this->buffer.reset();
-	this->buffer.seek(value);
-	this->buffer.putChar('\x0');
-	this->buffer.seek(0);
-	return true;
-}
 
 qint64 DiskReader::getSize()
 {

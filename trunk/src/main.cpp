@@ -7,18 +7,23 @@
 #include "diskreader.h"
 #include "mftfinder.h"
 #include "ntfsbootrecord.h"
+#include "clasterreader.h"
 
 #include "common.h"
 
 #define useGUI false
 
+#define RECORDS_TO_READ 100000
+
 int main (int argc, char **argv)
 {
 
-  qint64              devsize = 0;
+//  qint64              devsize = 0;
   mftFinder           mftf;
   NTFSBootRecord      ntfs_br;
-
+  ClasterReader       cread;
+  char               *diskData;
+  quint64             diskDataLen;
   if (argc < 3)
     {
       /*
@@ -30,27 +35,19 @@ int main (int argc, char **argv)
     }
   QFile               out (argv[2]);
   DiskReader          hdd (argv[1]);
-  DBG << hdd.bs.isValid ();
+
   out.open (QIODevice::WriteOnly | QIODevice::Truncate);
+  DBG << cread.init (&hdd);
+  diskDataLen = cread.getBytesPerClaster () * RECORDS_TO_READ;
+  diskData = (char *) new (char[diskDataLen]);
+  printf ("diskData = 0x%x\n", &diskData);
+  DBG << "diskDataLen" << diskDataLen;
+  DBG << "diskData" << &diskData[0];
+  DBG << cread.read (hdd.bs.bs.mft_location, RECORDS_TO_READ, diskData);
+  out.write (diskData, diskDataLen);
+  out.close ();
 
-  if (!hdd.isReady ())
-    {
-      printf ("%s", "hdd device not ready\n");
-
-    }
-  devsize = hdd.getSize ();
-  DBG << "sizeof device is" << devsize;
-
-  mftf.setDisk (&hdd);
-  DBG << mftf.TryViaMirror ();
-
-  out.write (mftf.record.getData (), MFT_RECORD_LEN);
-  int                 i;
-  for (i = 0; i < 20; i++)
-    {
-      if (mftf.readNext () == false)
-	break;
-      out.write (mftf.record.getData (), MFT_RECORD_LEN);
-    }
+  delete              diskData;
+  return -1;
 
 }

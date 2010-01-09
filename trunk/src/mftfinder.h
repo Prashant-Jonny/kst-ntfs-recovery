@@ -14,7 +14,7 @@
 class               mftFinder
 {
 protected:
-  DiskReader        * disk;
+  DiskReader * disk;
 
   char                recordData[MFT_RECORD_LEN];
   quint64             mftMirrorPos;

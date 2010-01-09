@@ -15,7 +15,10 @@ bool NTFSBootRecord::isValid ()
   DBG << this->bs.oem_id;
   if (this->bs.oem_id != NTFS_OEM_ID)
     return false;
-  return false;
+  if (this->bs.end_of_bootsector_magic != NTFS_END_OF_BOOTSECTOR_MAGIC)
+    return false;
+
+  return true;
 
 }
 

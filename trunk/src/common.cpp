@@ -61,3 +61,35 @@ void kst_mem_cpy (char *src, char *dst, quint64 src_size, quint64 dst_size)
     }
 
 }
+
+#ifdef kstNEW_DELETE
+void               *operator  new[] (size_t size)
+{
+  return malloc (size);
+}
+
+void               *operator  new (size_t size)
+{
+  return malloc (size);
+}
+
+void operator       delete[] (void *ptr)
+{
+  free (ptr);
+}
+
+void operator       delete[] (void *ptr, size_t)
+{
+  free (ptr);
+}
+
+void operator  delete (void *ptr)
+{
+  free (ptr);
+}
+
+void operator  delete (void *ptr, size_t)
+{
+  free (ptr);
+}
+#endif

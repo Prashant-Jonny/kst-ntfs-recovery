@@ -5,22 +5,22 @@
 
 #define MFT_RECORD_LEN 1024
 // 
-class mftrecord
+class               mftrecord
 {
 protected:
-  char *data;
+  char               *data;
 
 public:
-  void update ();
-  void dump ();
-  void setData (char *value)
+  void                update ();
+  void                dump ();
+  void                setData (char *value)
   {
     data = value;
-  } char *getData ()
+  } char             *getData ()
   {
     return data;
   }
-  int isPossibleValid ();
+  int                 isPossibleValid ();
 
   mftrecord ();
 

@@ -1,8 +1,7 @@
 #include "mftrecord.h"
 // 
 
-int
-mftrecord::isPossibleValid ()
+int mftrecord::isPossibleValid ()
 {
   static char parten[] = "FILE";
   int pos = 0;
@@ -19,10 +18,11 @@ mftrecord::mftrecord ()
 
 // 
 
-void
-mftrecord::dump ()
+void mftrecord::dump ()
 {
-  int i = 1024, j = 0, k = 0;
+  int i = 1024,
+    j = 0,
+    k = 0;
 
   for (i = 0; i < 1024; i++)
     {
@@ -40,9 +40,7 @@ mftrecord::dump ()
 
 }
 
-
-void
-mftrecord::update ()
+void mftrecord::update ()
 {
   // TODO
 }

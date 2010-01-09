@@ -21,6 +21,7 @@ class               ClasterReader
   DiskReader         *disk;
 
 public:
+
      
      
      

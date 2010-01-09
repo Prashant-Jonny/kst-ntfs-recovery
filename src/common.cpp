@@ -41,3 +41,28 @@ testFor (char *data, int data_len, char *buffer, int buffer_len)
     }
   return -1;
 }
+
+
+
+void
+kst_mem_cpy2 (char *src, char *dst, quint64 size)
+{
+  kst_mem_cpy (src, dst, size, size);
+}
+
+void
+kst_mem_cpy (char *src, char *dst, quint64 src_size, quint64 dst_size)
+{
+  quint64 len;
+//      quint64 i=0;
+  if (src == NULL || dst == NULL)
+    return;
+  len = (src_size > dst_size) ? dst_size : src_size;
+//      i=len % sizeof(quint64);
+
+  while (--len)
+    {
+      dst[len] = src[len];
+    }
+
+}

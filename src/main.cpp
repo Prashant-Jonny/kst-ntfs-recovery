@@ -7,6 +7,7 @@
 
 #include "diskreader.h"
 #include "mftfinder.h"
+#include "ntfsbootrecord.h"
 
 #include "common.h"
 
@@ -18,7 +19,7 @@ main (int argc, char **argv)
 
   qint64 devsize = 0;
   mftFinder mftf;
-
+  NTFSBootRecord ntfs_br;
 
   if (argc < 3)
     {
@@ -31,6 +32,7 @@ main (int argc, char **argv)
     }
   QFile out (argv[2]);
   DiskReader hdd (argv[1]);
+  DBG << hdd.bs.isValid ();
   out.open (QIODevice::WriteOnly | QIODevice::Truncate);
 
   if (!hdd.isReady ())

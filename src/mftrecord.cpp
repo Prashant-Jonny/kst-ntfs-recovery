@@ -4,9 +4,9 @@
 int
 mftrecord::isPossibleValid ()
 {
-  static char parten[] = "FILE0";
+  static char parten[] = "FILE";
   int pos = 0;
-  pos = testFor (parten, 5, this->data, MFT_RECORD_LEN);
+  pos = testFor (parten, 4, this->data, MFT_RECORD_LEN);
   DBG << "pos = " << pos;
   return (pos >= 0) ? pos : -1;
 

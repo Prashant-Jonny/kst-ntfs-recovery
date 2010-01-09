@@ -15,5 +15,6 @@
 
 
 int testFor (char *data, int data_len, char *buffer, int buffer_len);
-
+void kst_mem_cpy (char *src, char *dst, quint64 src_size, quint64 dst_size);
+void kst_mem_cpy2 (char *src, char *dst, quint64 size);
 #endif // __COMMON_H__

@@ -6,7 +6,7 @@
 // 
 DiskReader::DiskReader (const QString filename)
 {
-
+  ntfs_boot_sect *bsptr = this->bs.getDataPrt ();
   this->ready = false;
   this->size = 0;
   this->file.setFileName (filename);
@@ -27,6 +27,10 @@ DiskReader::DiskReader (const QString filename)
     }
   this->ready = true;
   this->getSize ();
+
+  this->seek (0);
+  this->read ((char *) bsptr, sizeof (ntfs_boot_sect));
+  this->seek (0);
   DBG << tr ("open ok");
 }
 
@@ -36,7 +40,8 @@ DiskReader::~DiskReader ()
 
 }
 
-bool DiskReader::isReady ()
+bool
+DiskReader::isReady ()
 {
   return this->ready;
 };
@@ -44,10 +49,10 @@ bool DiskReader::isReady ()
 // 
 
 
-bool DiskReader::seek (qint64 offset)
+bool
+DiskReader::seek (qint64 offset)
 {
-  bool
-    isOk = false;
+  bool isOk = false;
 
 
   isOk = this->file.seek (offset);
@@ -59,10 +64,10 @@ bool DiskReader::seek (qint64 offset)
 
 
 
-qint64 DiskReader::calcSize ()
+qint64
+DiskReader::calcSize ()
 {
-  quint64
-    position = 0, step;
+  quint64 position = 0, step;
 
   if (!this->isReady ())
     {
@@ -79,8 +84,7 @@ qint64 DiskReader::calcSize ()
    * seek function 
    */
 
-  int
-    bits = 48;
+  int bits = 48;
 
   while (bits-- > 0)
     {
@@ -115,10 +119,10 @@ DiskReader::read (char *buffer, unsigned int len)
 }
 
 
-bool DiskReader::skip (qint64 bytes)
+bool
+DiskReader::skip (qint64 bytes)
 {
-  qint64
-    target = bytes;
+  qint64 target = bytes;
   target += this->file.pos ();
 
   return (target == this->file.seek (target)) ? true : false;
@@ -126,10 +130,10 @@ bool DiskReader::skip (qint64 bytes)
 }
 
 
-bool DiskReader::goback (qint64 bytes)
+bool
+DiskReader::goback (qint64 bytes)
 {
-  qint64
-    target;
+  qint64 target;
   target = this->file.pos ();
   if (target < bytes)
     return false;

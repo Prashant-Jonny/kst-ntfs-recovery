@@ -6,6 +6,7 @@
 #define DISKREADER_H
 // 
 #include "common.h"
+#include "ntfsbootrecord.h"
 #include <QFile>
 #include <QBuffer>
 // 
@@ -15,13 +16,16 @@ Q_OBJECT protected:
     QFile file;
   bool ready;
 
+
   QBuffer buffer;
 
 protected:
     qint64 calcSize ();
 
 public:
-    qint64 getSize ()
+    NTFSBootRecord bs;
+
+  qint64 getSize ()
   {
     if ((this->size == 0) && this->isReady ())
       {

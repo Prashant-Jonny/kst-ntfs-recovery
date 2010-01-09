@@ -16,19 +16,19 @@ mftFinder::mftFinder (DiskReader * disk)
 
 // 
 
-bool mftFinder::TryViaMirror ()
+bool
+mftFinder::TryViaMirror ()
 {
-  qint64
-    dlen = this->disk->getSize ();
+  qint64 dlen = this->disk->getSize ();
   dlen = dlen >> 1;
   return this->TryViaMirror (dlen);
 
 }
 
-bool mftFinder::TryViaMirror (qint64 startPos)
+bool
+mftFinder::TryViaMirror (qint64 startPos)
 {
-  int
-    offsetFix;
+  int offsetFix;
   /*
    * get center of disk 
    */
@@ -64,7 +64,8 @@ bool mftFinder::TryViaMirror (qint64 startPos)
 }
 
 
-bool mftFinder::readNext ()
+bool
+mftFinder::readNext ()
 {
   if (this->disk->read ((char *) this->recordData, sizeof (this->recordData)))
     {

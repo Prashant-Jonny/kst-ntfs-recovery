@@ -62,33 +62,72 @@ void kst_mem_cpy (char *src, char *dst, quint64 src_size, quint64 dst_size)
 
 }
 
+void hexdump (char *data, quint64 len)
+{
+  quint64             i = 0;
+  quint8              a;
+  quint64             pos = 0;
+  printf ("0x%8x: ", pos);
+  for (i = 0; i <= len;)
+    {
+      a = data[i++];
+      pos++;
+
+      if (i % 0x100 == 0)
+	{
+	  printf ("%2x\n\n0x%8x: ", a, pos);
+	  continue;
+	}
+
+      if (i % 16 == 0)
+	{
+
+	  printf ("%2x\n0x%8x: ", a, pos);
+
+	  continue;
+	}
+      if (i % 8 == 0)
+	{
+	  printf ("%2x  ||  ", a);
+	  continue;
+	}
+      if (i % 4 == 0)
+	{
+	  printf ("%2x  |  ", a, pos & 0xFF);
+	  continue;
+	}
+      printf ("%2x ", a);
+    }
+
+}
+
 #ifdef kstNEW_DELETE
-void               *operator  new[] (size_t size)
+void               *operator    new[] (size_t size)
 {
   return malloc (size);
 }
 
-void               *operator  new (size_t size)
+void               *operator    new (size_t size)
 {
   return malloc (size);
 }
 
-void operator       delete[] (void *ptr)
+void operator         delete[] (void *ptr)
 {
   free (ptr);
 }
 
-void operator       delete[] (void *ptr, size_t)
+void operator         delete[] (void *ptr, size_t)
 {
   free (ptr);
 }
 
-void operator  delete (void *ptr)
+void operator    delete (void *ptr)
 {
   free (ptr);
 }
 
-void operator  delete (void *ptr, size_t)
+void operator    delete (void *ptr, size_t)
 {
   free (ptr);
 }

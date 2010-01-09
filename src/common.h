@@ -11,6 +11,7 @@
 #include <QString>
 #include <QApplication>
 #include <QIODevice>
+#include "ntfs3g_layout.h"
 
 #define DBG qDebug() <<  __FILE__ << __LINE__ <<__FUNCTION__ <<":"
 
@@ -21,13 +22,15 @@ void                kst_mem_cpy (char *src,
 				 quint64 src_size, quint64 dst_size);
 void                kst_mem_cpy2 (char *src, char *dst, quint64 size);
 
+void                hexdump (char *data, quint64 len);
+
 #ifdef kstNEW_DELETE
-void               *operator  new[] (size_t size);
-void               *operator  new (size_t size);
-void operator       delete[] (void *ptr);
-void operator       delete[] (void *ptr, size_t);
-void operator       delete (void *ptr);
-void operator       delete (void *ptr, size_t);
+void               *operator    new[] (size_t size);
+void               *operator    new (size_t size);
+void operator         delete[] (void *ptr);
+void operator         delete[] (void *ptr, size_t);
+void operator         delete (void *ptr);
+void operator         delete (void *ptr, size_t);
 #endif
 
 #endif // __COMMON_H

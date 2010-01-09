@@ -36,7 +36,7 @@ DiskReader::DiskReader (const QString filename)
 
 DiskReader::~DiskReader ()
 {
-
+  this->file.close ();
 }
 
 bool DiskReader::isReady ()

@@ -95,7 +95,7 @@ qint64 DiskReader::calcSize ()
 
 }
 
-int DiskReader::read (char *buffer, unsigned int len)
+quint32 DiskReader::read (char *buffer, quint32 len)
 {
   unsigned int actualRead = 0;
   if (!this->isReady ())

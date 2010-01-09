@@ -4,6 +4,8 @@
 #ifndef __COMMON_H__
 #define __COMMON_H__
 
+//#define kstNEW_DELETE 
+
 #include <QObject>
 #include <QDebug>
 #include <QString>
@@ -18,4 +20,14 @@ void                kst_mem_cpy (char *src,
 				 char *dst,
 				 quint64 src_size, quint64 dst_size);
 void                kst_mem_cpy2 (char *src, char *dst, quint64 size);
-#endif // __COMMON_H__
+
+#ifdef kstNEW_DELETE
+void               *operator  new[] (size_t size);
+void               *operator  new (size_t size);
+void operator       delete[] (void *ptr);
+void operator       delete[] (void *ptr, size_t);
+void operator       delete (void *ptr);
+void operator       delete (void *ptr, size_t);
+#endif
+
+#endif // __COMMON_H

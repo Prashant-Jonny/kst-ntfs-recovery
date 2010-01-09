@@ -35,7 +35,7 @@ public:
   qint64              size;
   bool                goback (qint64 bytes);
   bool                skip (qint64 bytes);
-  int                 read (char *buffer, unsigned int len);
+  quint32             read (char *buffer, quint32 len);
 
   bool                seek (qint64 offset);
 

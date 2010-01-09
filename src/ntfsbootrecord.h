@@ -35,10 +35,12 @@ typedef struct ntfs_boot_sectd
   quint8              current_head;
   quint8              extended_boot_signature;	/* 0x80 */
   quint8              reserved0;
+  quint64             number_of_sectors;
   quint64             mft_location;
   quint64             mft_mirr_location;
-  quint8              cluster_per_mft_record;
+  quint8              cluster_per_mft_record;	/* MFT record size in clusters */
   quint8              reserved1[3];
+  quint8              clusters_per_index_record;	/* index block size in clusters */
   quint64             volume_serial_number;
   quint32             boot_sect_checksum;
   quint8              bootcode[426];
@@ -48,11 +50,9 @@ typedef struct ntfs_boot_sectd
 class               NTFSBootRecord
 {
 
-protected:
-  ntfs_boot_sect bs;
-
 public:
-  ntfs_boot_sect * getDataPrt ();
+  ntfs_boot_sect bs;
+  ntfs_boot_sect     *getDataPrt ();
   bool                isValid ();
   void                setBs (void *value);
   void                getBs (void *buffer, quint64 buffersize);

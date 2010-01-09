@@ -4,7 +4,6 @@
  * никакой полезной нагрузки, кроме тестов.
  */
 
-
 #include "diskreader.h"
 #include "mftfinder.h"
 #include "ntfsbootrecord.h"
@@ -13,13 +12,12 @@
 
 #define useGUI false
 
-int
-main (int argc, char **argv)
+int main (int argc, char **argv)
 {
 
-  qint64 devsize = 0;
-  mftFinder mftf;
-  NTFSBootRecord ntfs_br;
+  qint64              devsize = 0;
+  mftFinder           mftf;
+  NTFSBootRecord      ntfs_br;
 
   if (argc < 3)
     {
@@ -30,8 +28,8 @@ main (int argc, char **argv)
       return -1;
 
     }
-  QFile out (argv[2]);
-  DiskReader hdd (argv[1]);
+  QFile               out (argv[2]);
+  DiskReader          hdd (argv[1]);
   DBG << hdd.bs.isValid ();
   out.open (QIODevice::WriteOnly | QIODevice::Truncate);
 
@@ -43,19 +41,16 @@ main (int argc, char **argv)
   devsize = hdd.getSize ();
   DBG << "sizeof device is" << devsize;
 
-
   mftf.setDisk (&hdd);
   DBG << mftf.TryViaMirror ();
 
   out.write (mftf.record.getData (), MFT_RECORD_LEN);
-  int i;
+  int                 i;
   for (i = 0; i < 20; i++)
     {
       if (mftf.readNext () == false)
 	break;
       out.write (mftf.record.getData (), MFT_RECORD_LEN);
     }
-
-
 
 }

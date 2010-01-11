@@ -1,3 +1,6 @@
+/*
+ * $Header$
+ */ 
 #include "clasterreader.h"
 //
 ClasterReader::ClasterReader ()

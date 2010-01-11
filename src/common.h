@@ -13,7 +13,12 @@
 #include <QIODevice>
 #include "ntfs3g_layout.h"
 
+
 #define DBG qDebug() <<  __FILE__ << __LINE__ <<__FUNCTION__ <<":"
+#define DDUMP(x) DBG << #x << "=" <<x 
+
+#define MEM_PTR(src, offset) ( ( (quint64) (src) + offset) )
+ 
 
 int                 testFor (char *data,
 			     int data_len, char *buffer, int buffer_len);

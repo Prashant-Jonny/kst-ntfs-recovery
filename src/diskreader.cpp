@@ -1,128 +1,228 @@
-/*
- * $Header$ 
- * */
 
+/* 
+ * That is a part of kst-ntfs-recovery source code
+ * (c) 2010 Eugeny Borisov
+ *
+ * Last changed by:   $Author$
+ * Last changed date: $Date$
+ * Revision:          $Rev$
+ * URL:               $HeadURL$
+ *
+ */
+#define PART_ERR_PRESENT (this->partition->error() != QFile::NoError)
+#define PART_ERR_CHECK if ( PART_ERR_PRESENT ) return false;
+  
 #include "diskreader.h"
-// 
-DiskReader::DiskReader (const QString filename)
+#include "ntfs3g_layout.h"
+
+/*
+ * Читает указанное количество секторов (count),
+ * начиная со смещения startOffset от начала диска
+ * 
+ * Возвращает QByteArray, либо NULL при неудаче. 
+ */
+QByteArray * DiskReader::ReadSectors ( qint64 startOffset, quint64 count )
 {
-  ntfs_boot_sect     *bsptr = this->bs.getDataPrt ();
-  this->ready = false;
-  this->size = 0;
-  this->file.setFileName (filename);
-  if (!this->file.exists ())
+    PART_ERR_CHECK;
+    throw("not implemented");
+}
+/*
+ * Позиционирует указатель чтения на смещение absPos байтов,
+ * относительно начала раздела.
+ */
+bool DiskReader::seek_b ( quint64 absPos )
+{
+   PART_ERR_CHECK;
+   return this->partition->seek(absPos);
+}
+
+/*
+ * Читает указанное количество секторов (count),
+ * начиная со смещения startOffset относительно начала раздела
+ * 
+ * Возвращает QByteArray, либо NULL при неудаче. 
+ */
+QByteArray * DiskReader::ReadBytes ( quint64 startOffset, quint64 count )
+{
+  PART_ERR_CHECK;
+  QByteArray *retval;
+  quint64 bytesReaded=0;
+  
+  if ( (count == 0) || (this->seek_b(startOffset) == false))
     {
-      DBG << __FUNCTION__ << tr ("file not exists") << filename;
-      return;
+      return NULL;
     }
-  else
+  
+   retval = new QByteArray(count,NULL );
+   if (retval == NULL) return false;
+   bytesReaded = this->partition->read(retval->data(), count);
+   
+   if (bytesReaded != count) {
+       delete retval;
+       return NULL;
+   }
+   this->AllocatedMem.append(retval);
+   return retval;
+}
+
+/*
+ * Устанавливает внутренние переменные, 
+ * которые влияют на работу функции this->ReadClasters 
+ * BytesPerSector      Количество байтов на сектор
+ * SectorsPerClaster   Количество секторов в кластере
+ * HiddenSectors       Количество скрытых секторов -
+ *                       по сути - смещение нулевого кластера в секторах 
+ */
+
+void DiskReader::initClustersInfo ( quint64 BytesPerSector,
+                               quint64 SectorsPerCluster,
+                               quint64 HiddenSectors )
+{
+this->BytesPerSector = BytesPerSector;
+  this->SectorsPerCluster = SectorsPerCluster;
+  this->HiddenSectors = HiddenSectors;
+  
+  this->FirstClusterOffsetInBytes = this->BytesPerSector 
+                                    * this->HiddenSectors;
+  this->BytesPerCluster = this->BytesPerSector*this->SectorsPerCluster;
+}
+
+/*
+ * Читает указанное количество кластеров (count),
+ * начиная со смещения startOffset 
+ * от конца скрытых секторов this->HiddenSectors
+ * Возвращает QByteArray, либо NULL при неудаче. 
+ */
+QByteArray * DiskReader::ReadClusters ( quint64 startOffset,
+                                        quint64 count )
+{
+  PART_ERR_CHECK;
+  if ( this->BytesPerSector==0 )
     {
-      DBG << tr ("opening ") << filename;
+      return NULL;
     }
+    
+   throw("not implemented");
+}
 
-  if (!this->file.open (QIODevice::ReadOnly))
+///*
+ //* Попытка инициализации, используя MBR
+ //* Если удачна, то вызывает this->initClastersInfo() 
+ //*/
+
+bool DiskReader::InitFromMBR (  ){
+  PART_ERR_CHECK;
+  QByteArray *zeroSector;
+  NTFS_BOOT_SECTOR *bs;
+  
+  zeroSector = this->ReadBytes(0,512);
+  if (zeroSector == false)
+    { 
+      return false;
+    }
+   
+  bs =  ( NTFS_BOOT_SECTOR * ) zeroSector->constData();
+  
+  if ( ( bs->end_of_sector_marker != magicEND_OF_BOOT_SECTOR ) 
+     ||( bs->oem_id != magicNTFS ) )
     {
-      DBG << __FUNCTION__ << tr ("can't open file");
-      return;
+      this->freeAllocatedMem();
+      return false;
     }
-  this->ready = true;
-  this->getSize ();
+  
+  this->initClustersInfo(bs->bpb.bytes_per_sector,
+        bs->bpb.sectors_per_cluster,
+        bs->bpb.hidden_sectors
+        );
+        
+  
 
-  this->seek (0);
-  this->read ((char *) bsptr, sizeof (ntfs_boot_sect));
-  this->seek (0);
-  DBG << tr ("open ok");
+  return true;
 }
 
-DiskReader::~DiskReader ()
+/*
+ * Открывает файл/раздел
+ */
+bool DiskReader::Open(QString filename)
 {
-  this->file.close ();
-}
 
-bool DiskReader::isReady ()
-{
-  return this->ready;
-};
-
-// 
-
-bool DiskReader::seek (qint64 offset)
-{
-  bool isOk = false;
-
-  isOk = this->file.seek (offset);
-  DBG << __FUNCTION__ << isOk;
-  return isOk;
-
-}
-
-qint64 DiskReader::calcSize ()
-{
-  quint64 position = 0,
-    step;
-
-  if (!this->isReady ())
+  this->partition = new QFile(this);
+  if (PART_ERR_PRESENT) 
     {
-      DBG << "device not ready";
-      return 0;
+      return false;
     }
-
-  position = this->file.size ();
-  if (position != 0)
-    return position;
-
-  /*
-   * If position unknown - try to calculate it. walk to end of file via
-   * seek function 
-   */
-
-  int bits = 48;
-
-  while (bits-- > 0)
+  
+  this->partition->setFileName(filename);
+  if (!this->partition->exists())
     {
-      step = (quint64) 1 << bits;
-      while (this->file.seek (position + step))
-	{
-	  position += step;
-	}
-      /*
-       * if (position !=0) { DBG << step << position; } 
-       */
+      return false;
     }
-
-  this->file.seek (0);
-  return position;
+  
+  this->partition->open(QIODevice::ReadOnly);
+  return (PART_ERR_PRESENT) ? false : true;
 
 }
 
-quint32 DiskReader::read (char *buffer, quint32 len)
+/*
+ * закрывает файл/раздел и удаляет информацию о нем.
+ */ 
+
+void DiskReader::Close(){
+  if (this->partition != NULL) 
+    {
+     this->partition->close();
+     delete this->partition;
+     this->partition=NULL;     
+    }
+    this->BytesPerCluster=0;
+}
+
+
+
+DiskReader::DiskReader(QObject *parent) : QObject(parent)
 {
-  unsigned int actualRead = 0;
-  if (!this->isReady ())
-    return -1;
-  actualRead = this->file.read (buffer, len);
-  if (actualRead != len)
-    return 1;
-  return 0;
+  this->partition=NULL;
+  this->BytesPerCluster=0;
 
 }
+/*
+ * Пробегается по списку известной выделенной памяти и освобождае её
+ */
+void DiskReader::freeAllocatedMem(){
+  qint64 i=0, j=0;
+  QByteArray *target;
+  j= this->AllocatedMem.size();
+  if (j==0) return;
+   for (i = 0; i < j; ++i) {
+     target = this->AllocatedMem.at(i);
+     if (target != NULL) 
+       {
+        try {
+          delete target;
+        } catch(...) {
+         qDebug() << "error when free ByteArray memory at pos" << i; 
+        }
+       }
+    }
+    
+    this->AllocatedMem.clear();
+}
 
-bool DiskReader::skip (qint64 bytes)
+DiskReader::~DiskReader(){
+ if (this->partition != NULL) 
+   {
+     this->partition->close();
+     delete this->partition;
+   }
+ this->freeAllocatedMem();
+}
+  #undef PART_ERR_PRESENT
+
+/*
+ * Возвращает кластер с указанным смещением
+ */
+QByteArray *DiskReader::operator[](quint64 index)
 {
-  qint64 target = bytes;
-  target += this->file.pos ();
-
-  return (target == this->file.seek (target)) ? true : false;
-
+  return this->ReadClusters(index,1);
 }
 
-bool DiskReader::goback (qint64 bytes)
-{
-  qint64 target;
-  target = this->file.pos ();
-  if (target < bytes)
-    return false;
-  target -= bytes;
-
-  return (target == this->file.seek (target)) ? true : false;
-}
